@@ -68,12 +68,11 @@ export const activityTracking = async(
     name: string,
     description: string,
     module: string,
-    ip_address: string | null,
     user_id?: string,
     admin_id?: string
   ) => {
     try {
-      const activity: any = { description, admin_id, user_id, status, activity_type, name, module, ip_address };
+      const activity: any = { description, admin_id, user_id, status, activity_type, name, module };
   
       await auditServices.createAuditLog(activity);
       logger.info(`${admin_id}: ${name}, Activity tracked successfully`, 'activityTracking.shared.helpers');

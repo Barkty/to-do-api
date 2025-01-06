@@ -24,17 +24,17 @@ app.use(express.static('public'));
 app.use(helmet());
 app.disable('x-powered-by');
 
-app.get('/health', (_, res) => res.json({ message: 'Okay' }));
+// app.get('/health', (_, res) => res.json({ message: 'Okay' }));
 
 app.use(ROUTE_BASE.V1_PATH, v1Router);
 
-app.use((_, res) =>
-  res.status(404).json({
-    status: 'error',
-    code: 404,
-    message: 'Resource Not Found'
-  })
-);
+// app.use((_, res) =>
+//   res.status(404).json({
+//     status: 'error',
+//     code: 404,
+//     message: 'Resource Not Found'
+//   })
+// );
 
 app.use(GlobalErrorCatcherMiddleware); // must be last applied middleware to catch globalErrs
 

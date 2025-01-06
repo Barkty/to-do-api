@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A Developer Foundry todo management",
   "main": "index.js",
+  "repository": "https://github.com/Barkty/to-do-api.git",
+  "author": "Kotoye Gbemisola <58271499+Barkty@users.noreply.github.com>",
+  "license": "ISC",
   "scripts": {
     "build": "rm -rf dist && tsc",
     "start": "node dist/src/index.js",
@@ -11,8 +14,6 @@
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "test": "cross-env STASHWISE_NODE_ENV=test nyc --reporter=lcov --reporter=text --reporter=text-summary mocha --require ts-node/register --file ./testSetup.ts --recursive --timeout=150000 tests/index.ts --exit"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "chai": "^5.1.2",

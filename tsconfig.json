@@ -1,0 +1,31 @@
+{
+    "ts-node": { "files": true },
+    "compilerOptions": {
+      "target": "ES6",
+      "module": "commonjs",
+      "lib": ["dom", "ES6", "ES2017", "esnext.asynciterable"],
+      "skipLibCheck": true,
+      "sourceMap": true,
+      "outDir": "./dist",
+      "moduleResolution": "node",
+      "types": ["node"],
+      "removeComments": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "strictFunctionTypes": true,
+      "noImplicitThis": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "resolveJsonModule": true,
+      "baseUrl": "."
+    },
+    "exclude": ["node_modules","dist", "**/*spec.ts", "newrelic.cjs", "src/shared/logger/index.ts"],
+    "include": ["./src/**/*.ts", "tests", "./request.d.ts",  "./.eslintrc.json", "backup/backup.ts"]
+}
+  
