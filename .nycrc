@@ -1,0 +1,29 @@
+{
+  "include": [
+    "src/**/*.ts"
+  ],
+  "reporter": [
+    "lcov",
+    "json",
+    "text",
+    "text-summary",
+    "clover"
+  ],
+  "check-coverage": true,
+  "branches": 60,
+  "lines": 70,
+  "functions": 70,
+  "statements": 70,
+  "exclude": [
+    "src/shared/enums/message.ts",
+    "src/shared/services/hashing/",
+    "src/shared/services/redis/",
+    "src/shared/services/email/",
+    "src/config/logger.ts",
+    "src/config/mail/",
+    "src/job/",
+    "src/shared/utils/templates/",
+    "src/shared/services/pay/",
+    "src/shared/utils/pagination.ts"
+  ]
+}
