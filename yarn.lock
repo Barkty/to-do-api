@@ -288,6 +288,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@faker-js/faker@npm:^9.3.0":
+  version: 9.3.0
+  resolution: "@faker-js/faker@npm:9.3.0"
+  checksum: 10c0/6528e2f0bf0abc315780024534074a449e01e7f581f1a50a20ee7103d29d842e1c4d7dd6b27aa173f668308bf55a1d64c2547286c0c4e5a8e08d0b8269aaedc7
+  languageName: node
+  linkType: hard
+
 "@hapi/hoek@npm:^9.0.0, @hapi/hoek@npm:^9.3.0":
   version: 9.3.0
   resolution: "@hapi/hoek@npm:9.3.0"
@@ -2254,6 +2261,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "df-todo-api@workspace:."
   dependencies:
+    "@faker-js/faker": "npm:^9.3.0"
     "@types/bcrypt": "npm:^5.0.2"
     "@types/chai": "npm:^5.0.1"
     "@types/compression": "npm:^1.7.5"

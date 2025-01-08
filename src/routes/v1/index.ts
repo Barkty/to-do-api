@@ -14,7 +14,19 @@ appRouter.get("/", (_req: Request, res: Response) => {
 });
 
 // appRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-appRouter.use('/auth', authRouter)
+appRouter.use('/auth', authRouter
+  /* 
+    #swagger.tags = ['Auth']
+
+    #swagger.security = [{
+        "apiKeyAuth": []
+    }] 
+
+    #swagger.responses[201] = {
+        schema: { $ref: '#/definitions/AuthUser' }
+    }  
+  */
+)
 appRouter.use('/task', todoRouter)
 
 export const v1Router = appRouter;
