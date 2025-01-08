@@ -2,11 +2,13 @@ import { PaginateModel, Schema, model } from "mongoose";
 import paginator from "mongoose-paginate-v2";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 import { IUser } from "../../shared/interfaces";
+import { generateID } from "../../shared/utils/generate-id";
 
 const modelName = "User";
 
 const schema = new Schema(
     {
+        _id: generateID(modelName),
         first_name: { type: "String", required: true, trim: true },
         last_name: { type: "String", required: true, trim: true },
         username: { type: "String", required: true, trim: true, unique: true },

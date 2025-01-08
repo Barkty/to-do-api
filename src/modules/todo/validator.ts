@@ -8,3 +8,7 @@ export const createTaskSchema = Joi.object({
     start_date: Joi.date().label('Start Date').required(),
     end_date: Joi.date().min(Joi.ref("start_date")).label('End Date'),
 })
+
+export const singleTaskSchema = Joi.object({
+    taskId: Joi.string().label('Task Id').required(),
+})

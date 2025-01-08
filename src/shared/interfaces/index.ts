@@ -34,6 +34,18 @@ export interface IDevice {
     browser: string
 }
 
+export interface ITask extends DefaultAttributes {
+    name: string,
+    description: string,
+    start_date: Date
+    end_date: Date,
+    avatar: string,
+    status: string,
+    date_deleted: Date,
+    is_completed: boolean,
+    is_deleted: boolean,
+}
+
 export interface IUser extends DefaultAttributes {
     first_name: string,
     last_name: string,

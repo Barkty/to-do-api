@@ -18,7 +18,7 @@ export class AuthRepositoryImpl implements AuthRepository {
                 { username: param },
             ]
         }
-        const user = await User.findOne(filter).populate("vault_id").lean();
+        const user = await User.findOne(filter).lean();
 
         return user;
     }

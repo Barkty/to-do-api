@@ -118,3 +118,31 @@ export const login = (data: any) => `
                         </td>
                     </tr> 
 `;
+
+export const verify_signup = (data: any) => `
+<tr>
+                        <td class="content">
+                            <p>Hello Champ👌,</p>
+                            <p>Thank you for signing up with Stashwise! To get started, please use the code below to verify your email and secure your account.
+                            </p>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td align="center">
+                                        <table border="0" cellspacing="0" cellpadding="0" style="width: 10%;">
+                                            <tr>
+                                                <td align="center"
+                                                    style="border-radius: 8px; background-color: #f5f5f5; color: #0052D5; padding: 5px;">
+                                                    <h1 style="letter-spacing: 7px;">${data.otp}</h1>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>   
+                            <p>This PIN is valid for the next ${data.expireTime} minutes. If you didn't request this, please ignore this email. We're excited to have you onboard!
+</p>
+                            <p style="font-size: 18px; color: #3A3F4E; font-weight: 400; margin: 24px 0px;">
+                                Happy Saving!<br>The Developer Foundry Team</p>
+                        </td>
+                    </tr>  
+                    `;

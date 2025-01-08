@@ -2,6 +2,7 @@ import * as emailTemplate from './template';
 
 const getTemplate = (type: string, data: any) => {
     switch (type) {
+      case 'verify_signup': return emailTemplate.verify_signup(data);
       case 'signup': return emailTemplate.signup(data);
       case 'login': return emailTemplate.login(data);
       case 'forgot_password': return emailTemplate.forgot_password(data);

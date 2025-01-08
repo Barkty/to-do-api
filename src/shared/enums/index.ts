@@ -11,3 +11,8 @@ export enum TASK_STATUS {
     INPROGRESS = "in progress",
     CANCELLED = "cancelled"
 }
+
+export const PREFIXES = {
+    User: "user",
+    Task: "task",
+};

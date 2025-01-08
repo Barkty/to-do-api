@@ -16,4 +16,20 @@ todoRouter.post('/',
     WatchAsyncController(todoController.createTask)
 )
 
+todoRouter.get('/:taskId',
+    validateDataMiddleware(todoValidator.singleTaskSchema, 'params'),
+    WatchAsyncController(todoController.getOneTask)
+)
+
+todoRouter.patch('/:taskId',
+    validateDataMiddleware(todoValidator.singleTaskSchema, 'params'),
+    validateDataMiddleware(todoValidator.createTaskSchema, 'payload'),
+    WatchAsyncController(todoController.updateTask)
+)
+
+todoRouter.delete('/:taskId',
+    validateDataMiddleware(todoValidator.singleTaskSchema, 'params'),
+    WatchAsyncController(todoController.deleteTask)
+)
+
 export default todoRouter

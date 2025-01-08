@@ -7,7 +7,7 @@ export const commonTemplate = (messageType: string, data: any) => {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stashwise</title>
+    <title>Developer Foundry</title>
     <style>
       @import url("https://fonts.cdnfonts.com/css/product-sans");
       @import url("https://fonts.cdnfonts.com/css/poppins");
@@ -120,7 +120,7 @@ export const commonTemplate = (messageType: string, data: any) => {
             <tr>
               <td class="banner">
                 <div>
-                  <h1>Stash<span>wise</span></h1>
+                  <h1>Developer Foundry</h1>
                 </div>
               </td>
             </tr>
@@ -147,7 +147,7 @@ export const commonTemplate = (messageType: string, data: any) => {
                         <tr>
                           <td>
                             <div class="footerlogo">
-                              <h1>Stash<span>wise</span></h1>
+                              <h1>Developer Foundry</h1>
                             </div>
                           </td>
                         </tr>
@@ -224,7 +224,7 @@ export const commonTemplate = (messageType: string, data: any) => {
                   "
                 >
                   You are receiving this message because you signed up on
-                  Stashwise. For more information about how we process data,
+                  Developer Foundry. For more information about how we process data,
                   please see our Privacy Policy.
                 </p>
                 <p
@@ -238,7 +238,7 @@ export const commonTemplate = (messageType: string, data: any) => {
                   "
                 >
                   If you experience any problems kindly contact us at
-                  <br />support@stashwise.africa or send us a WhatsApp message
+                  <br />gkotoye@gmail.com or send us a WhatsApp message
                   at<br />+2348122281320
                 </p>
                 <div style="display: flex; justify-content: space-between">
@@ -256,7 +256,7 @@ export const commonTemplate = (messageType: string, data: any) => {
                       font-weight: 400;
                     "
                   >
-                    Copyright ©2025 Stashwise Technologies Limited.<br />All
+                    Copyright ©2025 Developer Foundry Technologies Limited.<br />All
                     rights reserved
                   </p>
                   <img
