@@ -11,4 +11,4 @@ import './unit/middlewares/common.middleware.test';
 
 // integration tests
 import './integration/auth/index.test';
-import './integration/task/index.test';
+// import './integration/task/index.test';

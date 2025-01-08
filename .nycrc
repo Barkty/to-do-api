@@ -23,7 +23,6 @@
     "src/config/mail/",
     "src/job/",
     "src/shared/utils/templates/",
-    "src/shared/services/pay/",
     "src/shared/utils/pagination.ts"
   ]
 }
