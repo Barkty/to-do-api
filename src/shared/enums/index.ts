@@ -4,3 +4,10 @@ export enum AppEnv {
     DEVELOPMENT = 'development',
     TEST = 'test',
 }
+
+export enum TASK_STATUS {
+    DONE = "done",
+    PENDING = "pending",
+    INPROGRESS = "in progress",
+    CANCELLED = "cancelled"
+}

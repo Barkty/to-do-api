@@ -1,0 +1,122 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "6087:6087" # Expose application on port 3000
+    environment:
+      # Set environment variables for the application
+      - DEV_FOUNDRY_NODE_ENV=${DEV_FOUNDRY_NODE_ENV}
+      - DEV_FOUNDRY_PORT=${DEV_FOUNDRY_PORT}
+      - DEV_FOUNDRY_SALT_ROUND=${DEV_FOUNDRY_SALT_ROUND}
+      - DEV_FOUNDRY_CRYPTO_OTP_LENGTH=${DEV_FOUNDRY_CRYPTO_OTP_LENGTH}
+      - DEV_FOUNDRY_CRYPTO_SECRET=${DEV_FOUNDRY_CRYPTO_SECRET}
+      - DEV_FOUNDRY_CRYPTO_TIME_STEP=${DEV_FOUNDRY_CRYPTO_TIME_STEP}
+      - DEV_FOUNDRY_CRYPTO_HASH_ALGO=${DEV_FOUNDRY_CRYPTO_HASH_ALGO}
+      - DEV_FOUNDRY_CLOUDINARY=${DEV_FOUNDRY_CLOUDINARY}
+      - DEV_FOUNDRY_API_KEY=${DEV_FOUNDRY_API_KEY}
+      - DEV_FOUNDRY_API_SECRET=${DEV_FOUNDRY_API_SECRET}
+      - DEV_FOUNDRY_ENCRYPTIONKEY=${DEV_FOUNDRY_ENCRYPTIONKEY}
+      - DEV_FOUNDRY_ENCRYPTIONIV=${DEV_FOUNDRY_ENCRYPTIONIV}
+
+      - DEV_FOUNDRY_DEV_BREVO_HOST=${DEV_FOUNDRY_DEV_BREVO_HOST}
+      - DEV_FOUNDRY_DEV_BREVO_KEY=${DEV_FOUNDRY_DEV_BREVO_KEY}
+      - DEV_FOUNDRY_DEV_BREVO_PASS=${DEV_FOUNDRY_DEV_BREVO_PASS}
+      - DEV_FOUNDRY_DEV_BREVO_PORT=${DEV_FOUNDRY_DEV_BREVO_PORT}
+      - DEV_FOUNDRY_DEV_BREVO_USER=${DEV_FOUNDRY_DEV_BREVO_USER}
+
+      - DEV_FOUNDRY_DEV_DATABASE_URL=${DEV_FOUNDRY_DEV_DATABASE_URL}
+      - DEV_FOUNDRY_DEV_DATABASE_NAME=${DEV_FOUNDRY_DEV_DATABASE_NAME}
+      - DEV_FOUNDRY_DEV_REDIS_PORT=${DEV_FOUNDRY_DEV_REDIS_PORT}
+      - DEV_FOUNDRY_DEV_REDIS_HOST=${DEV_FOUNDRY_DEV_REDIS_HOST}
+      - DEV_FOUNDRY_DEV_URL=${DEV_FOUNDRY_DEV_URL}
+
+      - DEV_FOUNDRY_TEST_DATABASE_URL=${DEV_FOUNDRY_TEST_DATABASE_URL}
+      - DEV_FOUNDRY_TEST_DATABASE_NAME=${DEV_FOUNDRY_TEST_DATABASE_NAME}
+      - DEV_FOUNDRY_TEST_REDIS_PORT=${DEV_FOUNDRY_TEST_REDIS_PORT}
+      - DEV_FOUNDRY_TEST_REDIS_HOST=${DEV_FOUNDRY_TEST_REDIS_HOST}
+      - DEV_FOUNDRY_TEST_URL=${DEV_FOUNDRY_TEST_URL}
+
+      - DEV_FOUNDRY_PROD_REDIS_URL=${DEV_FOUNDRY_PROD_REDIS_URL}
+      - DEV_FOUNDRY_PROD_REDIS_PASS=${DEV_FOUNDRY_PROD_REDIS_PASS}
+      - DEV_FOUNDRY_PROD_REDIS_PORT=${DEV_FOUNDRY_PROD_REDIS_PORT}
+      - DEV_FOUNDRY_PROD_REDIS_HOST=${DEV_FOUNDRY_PROD_REDIS_HOST}
+      - DEV_FOUNDRY_PROD_DATABASE_URL=${DEV_FOUNDRY_PROD_DATABASE_URL}
+      - DEV_FOUNDRY_PROD_DATABASE_NAME=${DEV_FOUNDRY_PROD_DATABASE_NAME}
+      - DEV_FOUNDRY_PROD_URL=${DEV_FOUNDRY_PROD_URL}
+    depends_on:
+      - mongo
+      - redis
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - app_network # Ensure app is in the same network as Redis and MongoDB
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "6370:6370" # Expose Redis on port 6379
+    logging:
+      driver: "none"  # Suppress logs for Redis
+    networks:
+      - app_network # Ensure app is in the same network as Redis and MongoDB
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DEV_FOUNDRY_DATABASE_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DEV_FOUNDRY_DATABASE_PASS}
+    env_file:
+      - .env
+    ports:
+      - "27017:27017" # Expose MongoDB on port 27017
+    command:
+      - "--replSet"
+      - "rs0"
+      - "--auth"
+      - "--keyFile"
+      - "/data/db/mongo.key"
+    volumes:
+      - mongo_data:/data/db # Persistent data storage
+      - ./mongo.key:/data/db/mongo.key:ro # Mount the keyfile
+    restart: always
+    networks:
+      - app_network
+    logging:
+      driver: "none"  # Suppress logs for Mongo
+    user: "mongodb" # Ensure MongoDB runs as the 'mongodb' user, not root
+
+  mongo-setup:
+    image: mongo:latest
+    depends_on:
+      - mongo
+    networks:
+      - app_network
+    entrypoint: >
+      bash -c "
+      echo 'Waiting for MongoDB to be ready...';
+      until mongosh --host mongo:27017 --eval 'print(\"Waiting for MongoDB\")'; do
+        sleep 5;
+      done;
+      echo 'MongoDB is up. Initializing replica set...';
+      mongosh --host mongo:27017 --username ${DEV_FOUNDRY_DATABASE_USER} --password ${DEV_FOUNDRY_DATABASE_PASS} --authenticationDatabase admin --eval '
+        rs.status()' || mongosh --host mongo:27017 --username ${DEV_FOUNDRY_DATABASE_USER} --password ${DEV_FOUNDRY_DATABASE_PASS} --authenticationDatabase admin --eval '
+        rs.initiate({
+          _id: \"rs0\",
+          members: [{ _id: 0, host: \"mongo:27017\" }]
+        })'
+      "
+    restart: "no"
+
+volumes:
+  mongo_data:
+networks:
+  app_network:
+

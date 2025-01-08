@@ -16,6 +16,24 @@ export interface SignedData {
     expiresAt: any
 }
 
+export interface IMail {
+    email: string
+    name?: string
+    subject: string
+    username?: string
+    first_name: string
+    data?: any
+    attachments?: any
+}
+
+export interface IDevice {
+    ip_address: string | null,
+    operating_system: string,
+    platform: string,
+    browser_version: string,
+    browser: string
+}
+
 export interface IUser extends DefaultAttributes {
     first_name: string,
     last_name: string,

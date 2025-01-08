@@ -1,4 +1,8 @@
 import express, { Request, Response } from 'express';
+// import swaggerUi from "swagger-ui-express";
+// import swaggerDocument from "../../../swagger.json"
+import authRouter from '../../modules/auth/routes';
+import todoRouter from '../../modules/todo/routes';
 
 const appRouter = express.Router();
 
@@ -8,5 +12,9 @@ appRouter.get("/", (_req: Request, res: Response) => {
     success: 1,
   });
 });
+
+// appRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+appRouter.use('/auth', authRouter)
+appRouter.use('/task', todoRouter)
 
 export const v1Router = appRouter;

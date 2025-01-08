@@ -8,6 +8,7 @@ declare global {
     export interface Request {
       user: IUser;
       file?: any;
+      device?: IDevice | any;
     }
   }
 }

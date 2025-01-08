@@ -3,7 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import paginator from "mongoose-paginate-v2";
 import { v1Router, ROUTE_BASE } from '../routes';
-import compression from 'compression';
+// import compression from 'compression';
 import { GlobalErrorCatcherMiddleware } from '../shared/middlewares/global-error-catcher.middleware';
 
 paginator.paginate.options = { lean: true, leanWithId: false };
@@ -11,7 +11,7 @@ paginator.paginate.options = { lean: true, leanWithId: false };
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(compression());
+// app.use(compression());
 
 const corsOptions = {
   exposedHeaders: [ 'hash-id-key' ]

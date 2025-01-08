@@ -7,9 +7,11 @@ import AuthService from './services';
 import { fnRequest } from '../../shared/types';
 import { StatusCodes } from 'http-status-codes';
 import logger from '../../shared/logger';
-import { handleCustomError, BadException, UnAuthorizedException, NotFoundException, ForbiddenException, ConflictException } from '../../../shared/errors';
+import { handleCustomError, BadException, UnAuthorizedException, NotFoundException, ForbiddenException, ConflictException } from '../../shared/errors';
 
 export class AuthController {
+    // #swagger.tags = ['Auth']
+    // #swagger.summary = 'Verify a user's email'
     public verifyRegisterEmail: fnRequest = async(req, res) => {
         const { body } = req;
         const payload = new Dtos.VerifyEmailDto(body);
@@ -33,6 +35,7 @@ export class AuthController {
         );
     }
 
+    // #swagger.tags = ['Auth']
     public verifyOtp: fnRequest = async(req, res) => {
         const { body, path } = req;
         const payload = new Dtos.VerifyOtpDto(body);
@@ -60,6 +63,7 @@ export class AuthController {
         );
     }
 
+    // #swagger.tags = ['Auth']
     public createAccount: fnRequest = async (req, res) => {
         const { body } = req;
         const payload = new Dtos.UserDto(body);
@@ -68,13 +72,11 @@ export class AuthController {
         const resp = await AuthService.createAccount(payload, hash as string)
 
         if (resp instanceof UnAuthorizedException) {
-            // logger.info(`${device}: could not create an acount`, 'createAccount.authentication.controllers.ts');
             await Helpers.activityTracking('fail', 'create', 'Failed to create account', activityDescription.userCreateAccountFailed(), 'authentication');
             return handleCustomError(res, resp, StatusCodes.UNAUTHORIZED);
         }
         
         if (resp instanceof BadException) {
-            // logger.info(`${device}: could not create an acount`, 'createAccount.authentication.controllers.ts');
             await Helpers.activityTracking('fail', 'create', 'Failed to create account', activityDescription.userCreateAccountFailed(), 'authentication');
             return handleCustomError(res, resp, StatusCodes.BAD_REQUEST);
         }
@@ -92,6 +94,7 @@ export class AuthController {
         );
     }
 
+    // #swagger.tags = ['Auth']
     public login: fnRequest = async (req, res) => {
         const { body } = req;
         const payload = new Dtos.LoginDto(body);
@@ -125,7 +128,7 @@ export class AuthController {
         logger.info(`${payload.email} logged in successfully`, 'login.authentication.controllers.ts');
         await Helpers.activityTracking('success', 'read', 'Logged in stashwise user successfully', activityDescription.userLogin(), 'authentication', resp.user._id);
 
-        const { user: { password, pin, ...rest }, access_token, refresh_token } = resp
+        const { user: { password, ...rest }, access_token, refresh_token } = resp
         
         return ApiResponse.success(
             res,
@@ -157,14 +160,13 @@ export class AuthController {
         logger.info(`${payload.email} logged in on new device successfully`, 'verifyLogin.authentication.controllers.ts');
         await Helpers.activityTracking('success', 'read', 'Logged in stashwise user successfully', activityDescription.userLogin(), 'authentication', resp.user._id);
 
-        // const { user: { password, pin, ...rest }, access_token, refresh_token } = resp
+        const { user: { password, ...rest }, access_token, refresh_token } = resp
 
         return ApiResponse.success(
             res,
             StatusCodes.OK,
             Message.OPERATION_SUCCESSFUL('Login'),
-            resp
-            // { user: rest, access_token, refresh_token }
+            { user: rest, access_token, refresh_token }
         );
 
     }
