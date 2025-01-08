@@ -8,8 +8,8 @@ import * as CommonMiddleware from '../../shared/middlewares/common.middleware';
 
 const todoRouter = Router();
 
-todoRouter.use(CommonMiddleware.computeUserDevice)
 todoRouter.use(AuthenticationMidddlware.verifyAuthTokenMiddleware)
+todoRouter.use(CommonMiddleware.computeUserDevice)
 
 todoRouter.post('/',
     validateDataMiddleware(todoValidator.createTaskSchema, 'payload'),
@@ -19,6 +19,11 @@ todoRouter.post('/',
 todoRouter.get('/:taskId',
     validateDataMiddleware(todoValidator.singleTaskSchema, 'params'),
     WatchAsyncController(todoController.getOneTask)
+)
+
+todoRouter.get('/',
+    validateDataMiddleware(todoValidator.filterSchema, 'query'),
+    WatchAsyncController(todoController.getTasks)
 )
 
 todoRouter.patch('/:taskId',

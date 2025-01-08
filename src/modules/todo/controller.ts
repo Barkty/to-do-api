@@ -88,6 +88,20 @@ export class ToDoController {
             resp
         );
     }
+    
+    public getTasks: fnRequest = async(req, res) => {
+        const { query, user } = req;
+        const payload = new Dtos.FetchTasksDTO(query);
+
+        const resp = await TaskService.getMany({ ...payload, user_id: user._id })
+        
+        return ApiResponse.success(
+            res,
+            StatusCodes.OK,
+            Message.FETCHED_DATA_SUCCESSFULLY('task'),
+            resp
+        );
+    }
 }
 
 const todoController = new ToDoController();

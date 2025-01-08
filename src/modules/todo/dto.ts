@@ -18,3 +18,13 @@ export class UpdateTaskDTO extends BaseEntity<UpdateTaskDTO> {
 export class TaskIdDTO extends BaseEntity<TaskIdDTO> {
     taskId: string;
 }
+
+export class FetchTasksDTO extends BaseEntity<FetchTasksDTO> {
+    user_id: string;
+    page: string;
+    limit: string;
+    search: string;
+    status: string;
+    fromDate: Date;
+    toDate: Date;
+}

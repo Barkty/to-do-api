@@ -12,3 +12,12 @@ export const createTaskSchema = Joi.object({
 export const singleTaskSchema = Joi.object({
     taskId: Joi.string().label('Task Id').required(),
 })
+
+export const filterSchema = Joi.object({
+    page: Joi.number().label('Page').min(1).required(),
+    limit: Joi.number().label('Page Limit').required(),
+    search: Joi.string().label('Search'),
+    status: Joi.string().label('Status').valid(...Object.values(TASK_STATUS)),
+    fromDate: Joi.date().label('Start Date'),
+    toDate: Joi.date().min(Joi.ref("fromDate")).label('End Date'),
+});
