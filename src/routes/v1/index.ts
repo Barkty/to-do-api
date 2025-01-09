@@ -27,6 +27,6 @@ appRouter.use('/auth', authRouter
     }  
   */
 )
-appRouter.use('/task', todoRouter)
+appRouter.use('/tasks', todoRouter)
 
 export const v1Router = appRouter;

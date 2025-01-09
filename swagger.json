@@ -10,10 +10,10 @@
   "tags": [
     {
       "name": "Auth",
-      "description": "User authentication"
+      "description": "Everything about user authentication"
     },
     {
-      "name": "Task",
+      "name": "Tasks",
       "description": "Task management"
     }
   ],
@@ -29,12 +29,65 @@
     "application/json"
   ],
   "paths": {
-    "/": {
-      "get": {
-        "description": "",
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logs a Dev Foundry user in",
+        "description": "Authenticate a Dev Foundry user",
+        "operationId": "loginUser",
+        "requestBody": {
+          "description": "Requests to login with email and password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
-          "200": {
-            "description": "OK"
+          "201": {
+            "description": "Login successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUser"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUser"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "400": {
+            "description": "Invalid login credentials"
+          },
+          "403": {
+            "description": "Maximum login attempts exhausted"
+          },
+          "409": {
+            "description": "New device login detected"
+          },
+          "422": {
+            "description": "Validation exception"
           }
         }
       }
@@ -44,23 +97,53 @@
         "tags": [
           "Auth"
         ],
-        "description": "",
-        "responses": {
-          "201": {
-            "schema": {
-              "$ref": "#/definitions/AuthUser"
+        "summary": "Verifies new user account email",
+        "description": "Send a 6-digit OTP to authenticate user verifying email and creating account",
+        "operationId": "verifyNewUser",
+        "requestBody": {
+          "description": "Send a 6-digit OTP to authenticate user verifying email and creating account",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmail"
+              }
             },
-            "description": "Created"
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmail"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmail"
+              }
+            }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "required": true
         },
-        "security": [
-          {
-            "apiKeyAuth": []
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User already exists"
+          },
+          "422": {
+            "description": "Validation exception"
           }
-        ]
+        }
       }
     },
     "/auth/verify-signup-otp": {
@@ -68,23 +151,53 @@
         "tags": [
           "Auth"
         ],
-        "description": "",
-        "responses": {
-          "201": {
-            "schema": {
-              "$ref": "#/definitions/AuthUser"
+        "summary": "Verifies new user otp",
+        "description": "Verifies the 6-digit OTP sent to user's email and sets a hash id in the response header",
+        "operationId": "verifyNewUserOtp",
+        "requestBody": {
+          "description": "Verifies the 6-digit OTP sent to user's email and sets a hash id in the response header",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Otp"
+              }
             },
-            "description": "Created"
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/Otp"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Otp"
+              }
+            }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "required": true
         },
-        "security": [
-          {
-            "apiKeyAuth": []
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Otp expired or incorrect"
+          },
+          "422": {
+            "description": "Validation exception"
           }
-        ]
+        }
       }
     },
     "/auth/signup": {
@@ -92,47 +205,61 @@
         "tags": [
           "Auth"
         ],
-        "description": "",
-        "responses": {
-          "201": {
-            "schema": {
-              "$ref": "#/definitions/AuthUser"
-            },
-            "description": "Created"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
+        "summary": "Creates a new Dev Foundry user account",
+        "description": "Creates a new Dev Foundry account",
+        "operationId": "addUser",
+        "parameters": [
           {
-            "apiKeyAuth": []
+            "name": "hash-id-key",
+            "in": "header",
+            "description": "Hash ID",
+            "required": true
           }
-        ]
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "tags": [
-          "Auth"
         ],
-        "description": "",
+        "requestBody": {
+          "description": "Creates a new Dev Foundry user account",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignUp"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/SignUp"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/SignUp"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
-            "schema": {
-              "$ref": "#/definitions/AuthUser"
-            },
-            "description": "Created"
+            "description": "Dev Foundry account created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUser"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUser"
+                }
+              }
+            }
           },
-          "500": {
-            "description": "Internal Server Error"
+          "401": {
+            "description": "Invalid or expired hash"
+          },
+          "422": {
+            "description": "Validation exception"
           }
-        },
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ]
+        }
       }
     },
     "/auth/verify-login": {
@@ -140,21 +267,52 @@
         "tags": [
           "Auth"
         ],
-        "description": "",
-        "responses": {
-          "201": {
-            "schema": {
-              "$ref": "#/definitions/AuthUser"
+        "summary": "Verifies a Dev Foundry user device with OTP",
+        "description": "Authenticate a Dev Foundry user with OTP",
+        "operationId": "verifyLogin",
+        "requestBody": {
+          "description": "Verify an existent user's device",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyLogin"
+              }
             },
-            "description": "Created"
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyLogin"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUser"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUser"
+                }
+              }
+            }
           },
-          "500": {
-            "description": "Internal Server Error"
+          "404": {
+            "description": "No user found"
           }
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "BearerAuth": []
           }
         ]
       }
@@ -164,47 +322,53 @@
         "tags": [
           "Auth"
         ],
-        "description": "",
-        "responses": {
-          "201": {
-            "schema": {
-              "$ref": "#/definitions/AuthUser"
+        "summary": "Retrieves a Dev Foundry account",
+        "description": "Send a 6-digit OTP to authenticate user verifying email",
+        "operationId": "forgot-password",
+        "requestBody": {
+          "description": "Requests for OTP to retrieve account",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmail"
+              }
             },
-            "description": "Created"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ]
-      }
-    },
-    "/auth/verify-otp": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "description": "",
-        "responses": {
-          "201": {
-            "schema": {
-              "$ref": "#/definitions/AuthUser"
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmail"
+              }
             },
-            "description": "Created"
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmail"
+              }
+            }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "required": true
         },
-        "security": [
-          {
-            "apiKeyAuth": []
+        "responses": {
+          "200": {
+            "description": "OTP sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "422": {
+            "description": "Validation exception"
           }
-        ]
+        }
       }
     },
     "/auth/reset-password": {
@@ -212,45 +376,109 @@
         "tags": [
           "Auth"
         ],
-        "description": "",
-        "responses": {
-          "201": {
-            "schema": {
-              "$ref": "#/definitions/AuthUser"
-            },
-            "description": "Created"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
+        "summary": "Resets a Dev Foundry user account password",
+        "description": "Resets user password to new password",
+        "operationId": "reset-password",
+        "parameters": [
           {
-            "apiKeyAuth": []
+            "name": "hash-id-key",
+            "in": "header",
+            "description": "Hash ID",
+            "required": true
           }
-        ]
+        ],
+        "requestBody": {
+          "description": "Sends new user password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPassword"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPassword"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPassword"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Password reset successfully"
+          },
+          "401": {
+            "description": "Invalid or expired hash"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
       }
     },
-    "/auth/profile": {
-      "get": {
+    "/auth/verify-otp": {
+      "post": {
         "tags": [
           "Auth"
         ],
-        "description": "",
-        "responses": {
-          "201": {
-            "schema": {
-              "$ref": "#/definitions/AuthUser"
+        "summary": "Verifies user otp for forgot password",
+        "description": "Verifies the 6-digit OTP sent to user's email and sets a hash id in the response header",
+        "operationId": "verifyUserOtp",
+        "requestBody": {
+          "description": "Verifies the 6-digit OTP sent to user's email and sets a hash id in the response header",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Otp"
+              }
             },
-            "description": "Created"
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/Otp"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Otp"
+              }
+            }
           },
-          "500": {
-            "description": "Internal Server Error"
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Otp expired or incorrect"
+          },
+          "422": {
+            "description": "Validation exception"
           }
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "user_auth": [
+              "write:users",
+              "read:users"
+            ]
           }
         ]
       }
@@ -260,240 +488,491 @@
         "tags": [
           "Auth"
         ],
-        "description": "",
-        "responses": {
-          "201": {
-            "schema": {
-              "$ref": "#/definitions/AuthUser"
+        "summary": "Resends otp to user for forgot password",
+        "description": "Resends the 6-digit OTP sent to user's email again",
+        "operationId": "verifyUserOtp",
+        "requestBody": {
+          "description": "Resend the 6-digit OTP sent to user's email",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Otp"
+              }
             },
-            "description": "Created"
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/Otp"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Otp"
+              }
+            }
           },
-          "500": {
-            "description": "Internal Server Error"
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No user found"
+          },
+          "422": {
+            "description": "Validation exception"
           }
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "user_auth": [
+              "write:users",
+              "read:users"
+            ]
           }
         ]
       }
     },
-    "/auth/resend-otp-signup": {
-      "post": {
+    "/auth/profile": {
+      "get": {
         "tags": [
           "Auth"
         ],
-        "description": "",
+        "summary": "Fetched user profile",
+        "description": "Returns logged in user profile",
+        "operationId": "profile",
+        "requestBody": {
+          "description": "Returns logged in user profile"
+        },
         "responses": {
-          "201": {
-            "schema": {
-              "$ref": "#/definitions/AuthUser"
-            },
-            "description": "Created"
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmail"
+                }
+              }
+            }
           },
-          "500": {
-            "description": "Internal Server Error"
+          "401": {
+            "description": "Invalid or expired token"
           }
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "BearerAuth": []
           }
         ]
       }
     },
-    "/task/": {
-      "post": {
-        "description": "",
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
+    "/tasks": {
       "get": {
-        "description": "",
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Fetch user tasks",
+        "description": "Fetch and filter user tasks",
+        "operationId": "tasks",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page value that need to considered for filter",
+            "required": true,
+            "explode": false,
+            "schema": {
+              "type": "number",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Per page limit value that need to considered for filter",
+            "required": true,
+            "explode": false,
+            "schema": {
+              "type": "number",
+              "default": 10
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "An open variable to serch tasks by name or description",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "default": "upper sapomba"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Task status",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "default": "pending",
+              "enum": [
+                "pending",
+                "in progress",
+                "done",
+                "failed"
+              ]
+            }
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "description": "Task created on or after this date to be filtered",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "default": "2024-01-01"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "description": "Task created on or after this date to be filtered",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "default": "2024-11-01"
+            }
           }
-        }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResult"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or expired token"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
-    "/task/{taskId}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "taskId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
+    "/tasks/": {
+      "post": {
+        "tags": [
+          "Tasks"
         ],
+        "summary": "Creates a Dev Foundry user task",
+        "description": "Creates a task",
+        "operationId": "create-task",
+        "requestBody": {
+          "description": "Requests for Task to be created",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Task"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/Task"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Task"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "taskId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "taskId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
+          "200": {
+            "description": "Taask created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Task already exist"
+          },
+          "422": {
+            "description": "Validation exception"
           }
         }
       }
     }
   },
-  "definitions": {
-    "AuthUser": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "example": "object"
-        },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
         "properties": {
-          "type": "object",
-          "properties": {
-            "user": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "object"
-                },
-                "properties": {
-                  "type": "object",
-                  "properties": {
-                    "first_name": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "string"
-                        },
-                        "example": {
-                          "type": "string",
-                          "example": "John"
-                        }
-                      }
-                    },
-                    "last_name": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "string"
-                        },
-                        "example": {
-                          "type": "string",
-                          "example": "James"
-                        }
-                      }
-                    },
-                    "email": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "string"
-                        },
-                        "example": {
-                          "type": "string",
-                          "example": "john@email.com"
-                        }
-                      }
-                    },
-                    "phone": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "string"
-                        },
-                        "example": {
-                          "type": "string",
-                          "example": "12345"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "access_token": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "string"
-                },
-                "description": {
-                  "type": "string",
-                  "example": "User access token"
-                },
-                "example": {
-                  "type": "string",
-                  "example": "209SAr812"
-                }
-              }
-            },
-            "refresh_token": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "string"
-                },
-                "description": {
-                  "type": "string",
-                  "example": "User refresh token"
-                },
-                "example": {
-                  "type": "string",
-                  "example": "209SAr812"
-                }
-              }
-            }
+          "first_name": {
+            "type": "string",
+            "example": "John"
+          },
+          "last_name": {
+            "type": "string",
+            "example": "James"
+          },
+          "email": {
+            "type": "string",
+            "example": "john@email.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "12345"
+          },
+          "phone": {
+            "type": "string",
+            "example": "12345"
           }
         },
         "xml": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string",
-              "example": "login"
+          "name": "user"
+        }
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John"
+          },
+          "description": {
+            "type": "string",
+            "example": "James"
+          },
+          "email": {
+            "type": "string",
+            "example": "john@email.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "12345"
+          },
+          "phone": {
+            "type": "string",
+            "example": "12345"
+          }
+        },
+        "xml": {
+          "name": "user"
+        }
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email to login to user account",
+            "example": "johndoe@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password to login to user account",
+            "example": "209SAr812"
+          },
+          "fcm_token": {
+            "type": "string",
+            "description": "Device token",
+            "example": "878yHiong"
+          }
+        },
+        "xml": {
+          "name": "login"
+        }
+      },
+      "AuthUser": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string",
+                "description": "From whom or where did you hear about us",
+                "example": "FACEBOOK"
+              },
+              "first_name": {
+                "type": "string",
+                "example": "John"
+              },
+              "last_name": {
+                "type": "string",
+                "example": "James"
+              },
+              "email": {
+                "type": "string",
+                "example": "john@email.com"
+              },
+              "password": {
+                "type": "string",
+                "example": "12345"
+              },
+              "phone": {
+                "type": "string",
+                "example": "12345"
+              },
+              "referral_code": {
+                "type": "string",
+                "description": "User referral code",
+                "example": "John90"
+              }
+            }
+          },
+          "access_token": {
+            "type": "string",
+            "description": "User access token",
+            "example": "209SAr812"
+          },
+          "refresh_token": {
+            "type": "string",
+            "description": "User refresh token",
+            "example": "209SAr812"
+          }
+        },
+        "xml": {
+          "name": "login"
+        }
+      },
+      "PaginatedResult": {
+        "type": "object",
+        "properties": {
+          "doc": {
+            "type": "array",
+            "example": []
+          },
+          "totalDocs": {
+            "type": "number",
+            "example": 20
+          },
+          "totalPages": {
+            "type": "number",
+            "example": 4
+          },
+          "page": {
+            "type": "number",
+            "example": 1
+          },
+          "limit": {
+            "type": "number",
+            "example": 10
+          },
+          "prevPage": {
+            "type": "number",
+            "example": 1
+          },
+          "nextPage": {
+            "type": "number",
+            "example": 2
+          },
+          "hasPrevPage": {
+            "type": "boolean",
+            "example": true
+          },
+          "hasNextPage": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "xml": {
+          "name": "kyc"
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "##default"
+        }
+      }
+    },
+    "requestBodies": {
+      "VerifyEmail": {
+        "description": "User email for verification",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Login"
+            }
+          },
+          "application/xml": {
+            "schema": {
+              "$ref": "#/components/schemas/Login"
             }
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "hash-id-key",
+        "in": "header"
       }
     }
   }
